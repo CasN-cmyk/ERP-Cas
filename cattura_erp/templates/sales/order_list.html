@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Orders · Cattura ERP{% endblock %}
+{% block content %}
+<h1 class="mb-4">Orders</h1>
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <input type="text" name="search" class="form-control" placeholder="Search" value="{{ request.GET.search }}">
+    </div>
+    <div class="col-md-3">
+        <select name="sales_channel" class="form-select">
+            <option value="">All channels</option>
+            {% for channel in sales_channels %}
+            <option value="{{ channel.id }}" {% if request.GET.sales_channel == channel.id|stringformat:'s' %}selected{% endif %}>{{ channel.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="payment_status" class="form-select">
+            <option value="">All payment states</option>
+            {% for key,label in payment_choices %}
+            <option value="{{ key }}" {% if request.GET.payment_status == key %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="source_system" class="form-select">
+            <option value="">All sources</option>
+            {% for key,label in source_choices %}
+            <option value="{{ key }}" {% if request.GET.source_system == key %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-1">
+        <button class="btn btn-primary w-100" type="submit">Filter</button>
+    </div>
+</form>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Channel</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Payment</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.external_id }}</td>
+                <td>{{ order.sales_channel.name }}</td>
+                <td>{% if order.customer %}{{ order.customer.email }}{% else %}-{% endif %}</td>
+                <td>{{ order.order_date|date:'Y-m-d H:i' }}</td>
+                <td>{{ order.get_status_display }}</td>
+                <td>{{ order.get_payment_status_display }}</td>
+                <td>€ {{ order.total_gross|floatformat:2 }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="7" class="text-center">No orders yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% include 'partials/pagination.html' with page_obj=page_obj %}
+{% endblock %}

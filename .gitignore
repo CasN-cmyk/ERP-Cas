@@ -5,6 +5,8 @@ __pycache__/
 *.pyd
 .env
 api/.venv/
+cattura_erp/venv/
+venv/
 
 # Node
 web/node_modules/

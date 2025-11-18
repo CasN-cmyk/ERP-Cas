@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Products · Cattura ERP{% endblock %}
+{% block content %}
+<h1 class="mb-4">Products</h1>
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" placeholder="Search EAN / SKU / title" value="{{ request.GET.search }}">
+    </div>
+    <div class="col-md-3">
+        <select name="brand" class="form-select">
+            <option value="">All brands</option>
+            {% for brand in brands %}
+            <option value="{{ brand.id }}" {% if request.GET.brand == brand.id|stringformat:'s' %}selected{% endif %}>{{ brand.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="lifecycle_status" class="form-select">
+            <option value="">All lifecycle states</option>
+            {% for key,label in lifecycle_choices %}
+            <option value="{{ key }}" {% if request.GET.lifecycle_status == key %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100" type="submit">Filter</button>
+    </div>
+</form>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>EAN</th>
+                <th>SKU</th>
+                <th>Title</th>
+                <th>Brand</th>
+                <th>Lifecycle</th>
+                <th>Active</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>{{ product.ean }}</td>
+                <td>{{ product.sku }}</td>
+                <td>{{ product.base_title }}</td>
+                <td>{{ product.brand.name }}</td>
+                <td>{{ product.get_lifecycle_status_display }}</td>
+                <td>
+                    {% if product.active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6" class="text-center">No products available yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% include 'partials/pagination.html' with page_obj=page_obj %}
+{% endblock %}

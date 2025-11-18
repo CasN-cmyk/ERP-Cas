@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard · Cattura ERP{% endblock %}
+{% block content %}
+<h1 class="mb-4">Operations dashboard</h1>
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Orders last 7 days</h5>
+                <p class="display-6">{{ orders_last_7 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Orders last 30 days</h5>
+                <p class="display-6">{{ orders_last_30 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Revenue last 30 days</h5>
+                <p class="display-6">€ {{ revenue_last_30|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">Products nearing min stock</div>
+    <div class="table-responsive">
+        <table class="table table-striped mb-0">
+            <thead>
+                <tr>
+                    <th>EAN</th>
+                    <th>Title</th>
+                    <th>Min stock</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for product in low_stock_products %}
+                <tr>
+                    <td>{{ product.ean }}</td>
+                    <td>{{ product.base_title }}</td>
+                    <td>{{ product.min_stock }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="3" class="text-center">No products configured yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
